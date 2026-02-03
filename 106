@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FM Energy 106 - Radio Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .radio-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .logo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .frequency {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .player {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        audio {
+            width: 100%;
+            outline: none;
+        }
+
+        .status {
+            font-size: 1.2em;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .playing {
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073;
+            }
+            to {
+                box-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6;
+            }
+        }
+
+        .info {
+            margin-top: 30px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            .radio-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .logo {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="radio-container">
+        <img src="logo.jpg" alt="FM Energy 106 Logo" class="logo">
+        
+        <h1>FM Energy 106</h1>
+        <div class="frequency">106.7 MHz - Coronel Suárez, Buenos Aires</div>
+        
+        <div class="player">
+            <audio controls id="radioPlayer">
+                <source src="https://stream.zeno.fm/8rtrnqy8pz8tv" type="audio/mpeg">
+                <source src="https://fmenergy106.com.ar/stream" type="audio/mpeg">
+                Tu navegador no soporta la reproducción de audio.
+            </audio>
+        </div>
+        
+        
+        <div class="info">
+            <p>Escúchanos online en cualquier lugar del mundo</p>
+            <p>www.fmenergy106.com.ar</p>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('radioPlayer');
+        const status = document.getElementById('status');
+        
+        // Intentar cargar la primera fuente
+        audio.load();
+        
+        // Eventos del reproductor
+        audio.addEventListener('play', () => {
+            status.textContent = '🎧 Sintonizando FM Energy 106...';
+            status.classList.add('playing');
+        });
+        
+        audio.addEventListener('pause', () => {
+            status.textContent = '⏸️ Pausado';
+            status.classList.remove('playing');
+        });
+        
+        audio.addEventListener('error', () => {
+            status.textContent = '❌ Error al cargar la transmisión';
+            status.classList.remove('playing');
+            
+            // Intentar con la segunda fuente
+            if (audio.src.includes('zeno.fm')) {
+                audio.src = 'https://fmenergy106.com.ar/stream';
+                audio.load();
+                status.textContent = '🔄 Intentando conexión alternativa...';
+            }
+        });
+        
+        audio.addEventListener('waiting', () => {
+            status.textContent = '⏳ Cargando transmisión...';
+        });
+        
+
+        
+ 
+ 
+    </script>
+</body>
+</html>
