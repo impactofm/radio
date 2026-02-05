@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rockea Radio - Radio Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .radio-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .logo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .frequency {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .player {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        audio {
+            width: 100%;
+            outline: none;
+        }
+
+        .status {
+            font-size: 1.2em;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .playing {
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073;
+            }
+            to {
+                box-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6;
+            }
+        }
+
+        .info {
+            margin-top: 30px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .stream-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.8em;
+        }
+
+        @media (max-width: 600px) {
+            .radio-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .logo {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="radio-container">
+        <img src="logo.jpg" alt="Rockea Radio Logo" class="logo">
+        
+        <h1>Rockea Radio</h1>
+        <div class="frequency">Streaming Online</div>
+        
+        <div class="player">
+            <audio controls id="radioPlayer" preload="auto">
+                <source src="http://uk21freenew.listen2myradio.com:30812/stream" type="audio/mpeg">
+                <source src="http://rockea.radio12345.com" type="audio/mpeg">
+                <source src="http://rockea.radiostream321.com" type="audio/mpeg">
+                Tu navegador no soporta la reproducción de audio.
+            </audio>
+            <button id="retryButton" style="margin-top: 10px; padding: 10px 20px; background: #e60073; color: white; border: none; border-radius: 5px; cursor: pointer;">Reintentar Conexión</button>
+        </div>
+        
+        <div class="status" id="status">
+            🎵 Rockea Radio - La mejor música rock
+        </div>
+        
+        <div class="stream-info">
+            <p><strong>Estado:</strong> 🟢 ONLINE</p>
+        </div>
+        
+        <div class="info">
+            <p>Escúchanos online en cualquier lugar del mundo</p>
+            <p>rockea.radio12345.com</p>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('radioPlayer');
+        const status = document.getElementById('status');
+        const retryButton = document.getElementById('retryButton');
+        
+        // Función para intentar reproducir
+        function tryPlay() {
+            audio.play().then(() => {
+                status.textContent = '🎧 Reproduciendo Rockea Radio...';
+                status.classList.add('playing');
+            }).catch(error => {
+                console.error("Error al reproducir:", error);
+                status.textContent = '👆 Haz clic en play para comenzar';
+            });
+        }
+        
+        // Evento del botón de reintentar
+        retryButton.addEventListener('click', () => {
+            status.textContent = '🔄 Reconectando...';
+            audio.load();
+            setTimeout(tryPlay, 1000);
+        });
+        
+        // Eventos del reproductor
+        audio.addEventListener('play', () => {
+            status.textContent = '🎧 Reproduciendo Rockea Radio...';
+            status.classList.add('playing');
+            retryButton.style.display = 'none';
+        });
+        
+        audio.addEventListener('pause', () => {
+            status.textContent = '⏸️ Pausado';
+            status.classList.remove('playing');
+            retryButton.style.display = 'block';
+        });
+        
+        audio.addEventListener('error', (e) => {
+            console.error('Error de audio:', e);
+            status.textContent = '❌ Error al cargar la transmisión';
+            status.classList.remove('playing');
+            retryButton.style.display = 'block';
+            
+            // Intentar siguiente fuente
+            const sources = [
+                'http://uk21freenew.listen2myradio.com:30812/stream',
+                'http://rockea.radio12345.com',
+                'http://rockea.radiostream321.com'
+            ];
+            
+            const currentIndex = sources.findIndex(src => audio.src.includes(src));
+            if (currentIndex < sources.length - 1) {
+                audio.src = sources[currentIndex + 1];
+                audio.load();
+                status.textContent = `🔄 Intentando conexión ${currentIndex + 2}/3...`;
+            }
+        });
+        
+        audio.addEventListener('waiting', () => {
+            status.textContent = '⏳ Cargando transmisión...';
+        });
+        
+        audio.addEventListener('canplay', () => {
+            if (audio.paused) {
+                tryPlay();
+            }
+        });
+        
+        // Intentar reproducir al cargar la página
+        window.addEventListener('load', () => {
+            setTimeout(tryPlay, 2000);
+        });
+    </script>
+</body>
+</html>
